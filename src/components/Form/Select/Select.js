@@ -4,7 +4,7 @@ import { FormContext } from '../Form';
 
 const Select = ({ label, name, options }) => {
     const { form, handleFormChange } = useContext(FormContext);
-
+    console.log(form[name]);
     return (
         <div className={styles.inputContainer}>
             <label className={styles.lable}>{label}</label>
@@ -16,9 +16,7 @@ const Select = ({ label, name, options }) => {
             >
                 <option>--select {name}</option>
                 {options.map((o, idx) => (
-                    <option key={idx} value={o}>
-                        {`${o}`}
-                    </option>
+                    <option key={idx}>{`${o}`}</option>
                 ))}
             </select>
         </div>

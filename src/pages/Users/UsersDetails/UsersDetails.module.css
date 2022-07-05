@@ -17,3 +17,9 @@
 /* .detailsImg {
     margin-right: 4rem !important;
 } */
+
+.back {
+    margin-left: 4rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}

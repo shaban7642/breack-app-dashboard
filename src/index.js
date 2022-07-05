@@ -4,12 +4,24 @@ import './index.module.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { CookiesProvider } from 'react-cookie';
+import store from './store';
+
+// import dotenv from 'dotenv';
+// import dotenvexpand from 'dotenv-expand';
+
+// const myEnv = dotenv.config();
+// dotenvexpand.expand(myEnv);
+// console.log(process.env);
 
 ReactDOM.render(
     <BrowserRouter>
-        <React.StrictMode>
-            <App />
-        </React.StrictMode>
+        <Provider store={store}>
+            <CookiesProvider>
+                <App />
+            </CookiesProvider>
+        </Provider>
     </BrowserRouter>,
     document.getElementById('root')
 );

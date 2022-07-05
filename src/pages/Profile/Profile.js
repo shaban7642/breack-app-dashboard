@@ -5,19 +5,28 @@ import styles from './Profile.module.css';
 import profilePic from '../../utils/images/profilePic.jpg';
 import Input from '../../components/Form/Input/Input';
 import Select from '../../components/Form/Select/Select';
+import Error from '../../components/Error/Error';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUser } from '../../actions/users';
+import Success from '../../components/Success/Success';
 
+const initialState = {
+    username: undefined,
+    password: undefined,
+    phone: undefined,
+};
 const Profile = ({ isNew }) => {
-    const initialState = {
-        username: undefined,
-        password: undefined,
-        phone: undefined,
-        role: undefined,
-    };
+    const dispatch = useDispatch();
 
+    const { userInfo } = useSelector((state) => state.login);
     const submitHandler = (e, form) => {
         e.preventDefault();
-        console.log(form);
+        dispatch(updateUser(userInfo?.info?._id, form));
     };
+
+    const { user, loading, success, error } = useSelector(
+        (state) => state.updateUser
+    );
 
     return (
         <div className={styles.detailsContainer}>
@@ -30,6 +39,13 @@ const Profile = ({ isNew }) => {
                 />
             </div>
             <div className={styles.form}>
+                {error &&
+                    (Array.isArray(error) ? (
+                        error.map((e) => <Error>{e.msg}</Error>)
+                    ) : (
+                        <Error>{error}</Error>
+                    ))}
+                {success && <Success>Profile updated successfully</Success>}
                 <Form
                     initialState={initialState}
                     submitHandler={submitHandler}
@@ -39,11 +55,6 @@ const Profile = ({ isNew }) => {
                     <Input label='Username' name='username' />
                     <Input label='Password' name='password' type='password' />
                     <Input label='Phone' name='phone' />
-                    <Select
-                        label='Role'
-                        name='role'
-                        options={['1', '2', '3']}
-                    />
                 </Form>
             </div>
         </div>

@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
 // import { BsChevronLeft } from 'react-icons/bs';
 import { FaAngleLeft, FaBars } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const Navbar = ({ showSidebar, setShowSidebar }) => {
     const navigate = useNavigate();
+    const { userInfo } = useSelector((state) => state.login);
+
     const closeMenuHandler = () => {
         // navigate(-1);
         setShowSidebar(false);
@@ -16,44 +19,53 @@ const Navbar = ({ showSidebar, setShowSidebar }) => {
         setShowSidebar(true);
     };
 
+    useEffect(() => {
+        if (!userInfo) {
+            setShowSidebar(false);
+        }
+    }, [userInfo, setShowSidebar]);
+
     return (
         <>
             <div className={styles.navContainer}>
                 <nav>
                     <div className={styles.headerLogo}>
-                        {showSidebar ? (
-                            <div
-                                className={styles.backBtn}
-                                onClick={closeMenuHandler}
-                            >
-                                <FaAngleLeft />
-                            </div>
-                        ) : (
-                            <div
-                                className={styles.burger}
-                                onClick={openMenuHandler}
-                            >
-                                <FaBars />
-                            </div>
-                        )}
+                        {userInfo &&
+                            (showSidebar ? (
+                                <div
+                                    className={styles.backBtn}
+                                    onClick={closeMenuHandler}
+                                >
+                                    <FaAngleLeft />
+                                </div>
+                            ) : (
+                                <div
+                                    className={styles.burger}
+                                    onClick={openMenuHandler}
+                                >
+                                    <FaBars />
+                                </div>
+                            ))}
 
                         <h1>Break App</h1>
                     </div>
                     <div className={styles.headerNav}>
                         <ul>
-                            <li>username</li>
+                            <li>{userInfo?.info?.name}</li>
                             {/* <li>
                                 <NavLink to='/' className={styles.navHomeLink}>
                                     HOME
                                 </NavLink>
                             </li> */}
                             <li>
-                                <button
-                                    className={styles.navBtn}
-                                    onClick={() => navigate('/login')}
-                                >
-                                    Login
-                                </button>
+                                {!userInfo && (
+                                    <button
+                                        className={styles.navBtn}
+                                        onClick={() => navigate('/login')}
+                                    >
+                                        Login
+                                    </button>
+                                )}
                             </li>
                         </ul>
                     </div>

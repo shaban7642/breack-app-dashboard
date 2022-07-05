@@ -1,12 +1,18 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router';
+import { addRoom, updateRoom } from '../../../actions/rooms';
 import BackButton from '../../../components/Buttons/BackButton/BackButton';
-import Form, { FormContext } from '../../../components/Form/Form';
+import Error from '../../../components/Error/Error';
+import Form from '../../../components/Form/Form';
 import Input from '../../../components/Form/Input/Input';
 import Select from '../../../components/Form/Select/Select';
+import Success from '../../../components/Success/Success';
+import { ADD_ROOM_RESET, UPDATE_ROOM_RESET } from '../../../constants/rooms';
 import styles from './RoomsForm.module.css';
 
 const initialState = {
-    name: undefined,
+    room_name: undefined,
     announcement: undefined,
     room_BG: undefined,
     room_avatar: undefined,
@@ -18,29 +24,61 @@ const initialState = {
 };
 
 const RoomsForm = ({ isNew }) => {
-    const { form } = useContext(FormContext);
+    const dispatch = useDispatch();
+    const params = useParams();
+    const navigate = useNavigate();
 
     const submitHandler = (e, form) => {
         e.preventDefault();
-        console.log(form.private);
+        if (isNew) {
+            dispatch(addRoom(form));
+        } else {
+            dispatch(updateRoom(params.id, form));
+        }
     };
 
+    const { room, loading, success, error } = useSelector((state) => {
+        if (isNew) {
+            return state.addRoom;
+        } else {
+            return state.updateRoom;
+        }
+    });
+
     useEffect(() => {
-        console.log(form.private);
-    }, [form]);
+        if (success) {
+            setTimeout(() => {
+                dispatch({ type: isNew ? ADD_ROOM_RESET : UPDATE_ROOM_RESET });
+                navigate('/rooms');
+            }, 600);
+        }
+    }, [success, navigate, dispatch, isNew]);
     return (
         <>
             <div className={styles.back}>
                 <BackButton />
             </div>
             <div className={styles.RoomsFormContainer}>
+                {error &&
+                    (Array.isArray(error) ? (
+                        error.map((e) => <Error>{e.msg}</Error>)
+                    ) : (
+                        <Error>{error}</Error>
+                    ))}
+                {success && (
+                    <Success>
+                        {isNew
+                            ? 'Room created successfully'
+                            : 'Room updated successfully'}
+                    </Success>
+                )}
                 <Form
                     initialState={initialState}
                     submitHandler={submitHandler}
                     isNew={isNew}
                     formName='Room'
                 >
-                    <Input label='Name' name='name' />
+                    <Input label='Name' name='room_name' />
                     <Input label='Announcement' name='announcement' />
                     <Select
                         label='Private'
@@ -63,12 +101,7 @@ const RoomsForm = ({ isNew }) => {
                             />
                             <Select
                                 label='Room_Generas'
-                                name='drinks'
-                                options={['1', '2', '3']}
-                            />
-                            <Select
-                                label='Drinks'
-                                name='drinks'
+                                name='room_generas'
                                 options={['1', '2', '3']}
                             />
                         </>

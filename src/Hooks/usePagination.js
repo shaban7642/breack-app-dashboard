@@ -14,10 +14,13 @@ export const usePagination = ({
     currentPage,
 }) => {
     const paginationRange = useMemo(() => {
+        console.log(pageSize);
         const totalPageCount = Math.ceil(totalCount / pageSize);
-
+        console.log(totalPageCount);
         // Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
         const totalPageNumbers = siblingCount + 5;
+
+        console.log(totalPageNumbers);
 
         /*
       If the number of pages is less than the page numbers we want to show in our
@@ -33,6 +36,8 @@ export const usePagination = ({
             totalPageCount
         );
 
+        console.log(leftSiblingIndex, rightSiblingIndex);
+
         /*
       We do not want to show dots if there is only one position left 
       after/before the left/right page count as that would lead to a change if our Pagination
@@ -43,6 +48,8 @@ export const usePagination = ({
 
         const firstPageIndex = 1;
         const lastPageIndex = totalPageCount;
+
+        console.log(shouldShowLeftDots, shouldShowRightDots);
 
         if (!shouldShowLeftDots && shouldShowRightDots) {
             let leftItemCount = 3 + 2 * siblingCount;
@@ -65,6 +72,8 @@ export const usePagination = ({
             return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
         }
     }, [totalCount, pageSize, siblingCount, currentPage]);
+
+    console.log(paginationRange);
 
     return paginationRange;
 };
